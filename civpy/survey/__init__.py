@@ -13,6 +13,8 @@ Spatial Models
     SurveyPoint
     TIN
 
+.. plot:: ../examples/survey/spatial_hash_ex2.py
+
 
 Alignment
 =========
@@ -22,6 +24,8 @@ Alignment
     PI
     SurveyStake
     Alignment
+
+.. plot:: ../examples/survey/alignment_ex1.py    
 """
 
 from .alignment import *

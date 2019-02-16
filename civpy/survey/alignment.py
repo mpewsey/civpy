@@ -28,6 +28,11 @@ class Alignment(object):
         The station margin at the beginning and end of the alignment. Beyond
         this threshold, generated station coordinates from global coordinates
         will be ignored.
+
+    Examples
+    --------
+    .. plot:: ../examples/survey/alignment_ex1.py
+        :include-source:
     """
     BISC_TOL = 1e-4 # Bisector station tolerance
 
