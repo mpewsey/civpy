@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.com/mpewsey/civpy.svg?branch=master)](https://travis-ci.com/mpewsey/civpy)
 [![Documentation Status](https://readthedocs.org/projects/civpy/badge/?version=latest)](https://civpy.readthedocs.io/en/latest/?badge=latest)
-[![codecov](https://codecov.io/gh/mpewsey/civpy/branch/master/graph/badge.svg)](https://codecov.io/gh/mpewsey/civpy)
+[![codecov](https://codecov.io/gh/mpewsey/civpy/branch/master/graph/badge.svg?token=zbJbsGGSoL)](https://codecov.io/gh/mpewsey/civpy)
 
 
 ## Features
