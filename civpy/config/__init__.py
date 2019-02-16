@@ -1,1 +1,1 @@
-from . import matplotlib
+from . import _matplotlib
