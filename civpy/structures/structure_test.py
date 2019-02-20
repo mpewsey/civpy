@@ -12,8 +12,8 @@ def Structure1():
     )
 
     m = Material('dummy',
-        elasticity=29_000,
-        rigidity=11_500
+        elasticity=29000,
+        rigidity=11500
     )
 
     g = ElementGroup('dummy', s, m)
