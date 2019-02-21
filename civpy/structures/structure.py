@@ -2,8 +2,10 @@ import propy
 import inspect
 import numpy as np
 import pandas as pd
+from functools import wraps
 import matplotlib.pyplot as plt
 from .element import clear_element_cache
+from .element_load import clear_element_load_cache
 from ..math import rotation_matrix3
 
 __all__ = ['Structure']
@@ -20,6 +22,7 @@ def build(func):
                 return i
         return -1
 
+    @wraps(func)
     def wrapper(obj, *args, **kwargs):
         # If already built, perform the operation
         if obj.build:
@@ -40,6 +43,7 @@ def build(func):
         result = func(obj, *args, **kwargs)
         obj.build.clear()
         clear_element_cache()
+        clear_element_load_cache()
 
         return result
 
@@ -63,6 +67,14 @@ class Structure(object):
         A list of :class:`.Element`.
     symmetry : bool
         If True, symmetry will be applied to the structure.
+
+    Examples
+    --------
+    The following example creates an a structure and performs linear analysis
+    for a load case.
+
+    .. plot:: ../examples/structures/structure_ex1.py
+        :include-source:
     """
     # Custom properties
     name = propy.str_property('name')
@@ -319,6 +331,16 @@ class Structure(object):
 
     @build
     def local_elem_loads(self, lc, defl=None):
+        """
+        Returns the local element loads for the input load case.
+
+        Parameters
+        ----------
+        lc : :class:`.LoadCase`
+            The applied load case.
+        defl : array
+            The global node deflections.
+        """
         n = len(self.build['nodes'])
         m = len(self.build['elements'])
         q = np.zeros((m, 12), dtype='float')
@@ -387,11 +409,19 @@ class Structure(object):
         return d
 
     def _create_summary(self, r):
+        """
+        Creates dataframe summaries for the structural analysis results.
+
+        Parameters
+        ----------
+        r : dict
+            A dictionary of result arrays.
+        """
         n = len(self.build['nodes'])
         m = len(self.build['elements'])
-        u = np.array([x.fixities() for x in self.nodes], dtype='bool')
-        u = u.reshape(-1, 6)
         lc = self.build['load_cases']
+        u = [x.fixities() for x in self.nodes] * len(lc)
+        u = np.array(u, dtype='bool')
 
         # Global load data frame
         df1 = pd.DataFrame()
