@@ -35,7 +35,7 @@ pip install git+https://github.com/mpewsey/civpy#egg=civpy
     </tr>
     <tr>
         <td width='50%' align='center'>
-            <img width=300 height=300 alt='spatial_hash' src='docs/_static/alignment.png'><br>
+            <img width=300 height=300 alt='alignment' src='docs/_static/alignment.png'><br>
             Model survey alignments with or without horizontal curves and perform coordinate calculations.
         </td>
         <td width='50%' align='center'>
@@ -54,11 +54,11 @@ pip install git+https://github.com/mpewsey/civpy#egg=civpy
 	</tr>
     <tr>
         <td width='50%' align='center'>
-            <img width=300 height=300 align='center' alt='tin' src='docs/_static/structure.png'><br>
+            <img width=300 height=300 align='center' alt='structure' src='docs/_static/structure.png'><br>
             Model structures with symmetry.
         </td>
         <td width='50%' align='center'>
-            <img width=300 height=300 align='center' alt='tin' src='docs/_static/truss.png'><br>
+            <img width=300 height=300 align='center' alt='truss' src='docs/_static/truss.png'><br>
             Plot structure geometry in 3D or in 2D cross sections.
         </td>
     </tr>
