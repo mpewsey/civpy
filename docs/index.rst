@@ -8,7 +8,7 @@ CivPy
 .. image:: https://readthedocs.org/projects/civpy/badge/?version=latest
     :target: https://civpy.readthedocs.io/en/latest/?badge=latest
 
-.. image:: https://codecov.io/gh/mpewsey/civpy/branch/master/graph/badge.svg
+.. image:: https://codecov.io/gh/mpewsey/civpy/branch/master/graph/badge.svg?token=zbJbsGGSoL
     :target: https://codecov.io/gh/mpewsey/civpy
 
 About
