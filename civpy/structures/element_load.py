@@ -3,6 +3,15 @@ import numpy as np
 from functools import lru_cache
 from .element import transformation_matrix
 
+__all__ = [
+    'load_distances',
+    'force_local_reactions',
+    'moment_local_reactions',
+    'local_reactions',
+    'clear_element_load_cache',
+    'ElementLoad',
+]
+
 
 def load_distances(dx, dy, dz, ix, delx):
     """
@@ -214,6 +223,11 @@ def local_reactions(fx, fy, fz, mx, my, mz, dx, dy, dz, roll, ix, delx,
         r[10] = 0
 
     return r
+
+
+def clear_element_load_cache():
+    """Clears the element load function cache."""
+    local_reactions.cache_clear()
 
 
 class ElementLoad(np.ndarray):

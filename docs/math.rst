@@ -1,0 +1,2 @@
+.. automodule:: civpy.math
+   :members:

@@ -3,6 +3,8 @@
 Survey (:mod:`civpy.survey`)
 ============================
 
+Contains functions for modeling alignments and performing spatial queries.
+
 
 Spatial Models
 ==============
@@ -25,7 +27,7 @@ Alignment
     SurveyStake
     Alignment
 
-.. plot:: ../examples/survey/alignment_ex1.py    
+.. plot:: ../examples/survey/alignment_ex1.py
 """
 
 from .alignment import *

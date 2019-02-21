@@ -26,6 +26,29 @@ Loads
     LoadCase
     NodeLoad
     ElementLoad
+
+
+Element Functions
+=================
+.. autosummary::
+    :toctree: generated/
+
+    rotation_matrix
+    transformation_matrix
+    local_stiffness
+    clear_element_cache
+
+
+Element Load Functions
+======================
+.. autosummary::
+    :toctree: generated/
+
+    load_distances
+    force_local_reactions
+    moment_local_reactions
+    local_reactions
+    clear_element_load_cache
 """
 
 from xsect import CrossSection
