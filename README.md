@@ -23,26 +23,22 @@ pip install git+https://github.com/mpewsey/civpy#egg=civpy
 
 <table style='text-align: center'>
     <tr>
-        <td style='width: 50%'>
-            <img alt='spatial_hash' src='docs/_static/spatial_hash.png'><br>
-        	  Find points in N-dimensional spaces using spatial hash distance queries.
-
+        <td width='50%' align='center'>
+            <img width=300 height=300 align='center' alt='spatial_hash' src='docs/_static/spatial_hash.png'><br>
+            Find points in N-dimensional spaces using spatial hash distance queries.
         </td>
-        
-        <td>
-            <img alt='tin' src='docs/_static/tin.png'><br>
+        <td width='50%' align='center'>
+            <img width=300 height=300 alt='tin' src='docs/_static/tin.png'><br>
             Create ground surface triangulations, find surface elevations, and
             perform point distance queries to the surface.
         </td>
     </tr>
     <tr>
-        <td style='width: 50%'>
-            <img alt='spatial_hash' src='docs/_static/alignment.png'><br>
-        	  Model survey alignments with or without horizontal curves and perform coordinate calculations.
+        <td width='50%' align='center'>
+            <img width=300 height=300 alt='spatial_hash' src='docs/_static/alignment.png'><br>
+            Model survey alignments with or without horizontal curves and perform coordinate calculations.
         </td>
-        
-        <td>
-        
+        <td width='50%' align='center'>
         </td>
     </tr>
 </table>
@@ -51,18 +47,18 @@ pip install git+https://github.com/mpewsey/civpy#egg=civpy
 
 <table style='text-align: center'>
 	<tr>
-	  <td colspan='2'>
+	  <td colspan='2' align='center'>
 	  <img alt='tin' src='docs/_static/summary.png'><br>
      Perform analysis of 2D and 3D trusses and manipulate node, element, and reaction results using Pandas data frames.
      </td>
 	</tr>
     <tr>
-        <td style='width: 50%'>
-            <img alt='tin' src='docs/_static/structure.png'><br>
+        <td width='50%' align='center'>
+            <img width=300 height=300 align='center' alt='tin' src='docs/_static/structure.png'><br>
             Model structures with symmetry.
         </td>
-        <td>
-            <img alt='tin' src='docs/_static/truss.png'><br>
+        <td width='50%' align='center'>
+            <img width=300 height=300 align='center' alt='tin' src='docs/_static/truss.png'><br>
             Plot structure geometry in 3D or in 2D cross sections.
         </td>
     </tr>
