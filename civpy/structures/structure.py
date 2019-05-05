@@ -1,4 +1,8 @@
-import propy
+"""
+Copyright (c) 2019, Matt Pewsey
+"""
+
+import attr
 import inspect
 import numpy as np
 import pandas as pd
@@ -25,7 +29,7 @@ def build(func):
     @wraps(func)
     def wrapper(obj, *args, **kwargs):
         # If already built, perform the operation
-        if obj.build:
+        if obj._build:
             return func(obj, *args, **kwargs)
 
         # If not built, build it, perform the operation, and destroy the build
@@ -41,7 +45,7 @@ def build(func):
 
         obj._create_build(lc)
         result = func(obj, *args, **kwargs)
-        obj.build.clear()
+        obj._build.clear()
         clear_element_cache()
         clear_element_load_cache()
 
@@ -53,6 +57,7 @@ def build(func):
     return wrapper
 
 
+@attr.s(hash=False)
 class Structure(object):
     """
     A class representing a structure.
@@ -76,16 +81,11 @@ class Structure(object):
     .. plot:: ../examples/structures/structure_ex1.py
         :include-source:
     """
-    # Custom properties
-    name = propy.str_property('name')
-    symmetry = propy.bool_property('symmetry')
-
-    def __init__(self, name, nodes, elements, symmetry=False):
-        self.name = name
-        self.nodes = nodes
-        self.elements = elements
-        self.symmetry = symmetry
-        self.build = {}
+    name = attr.ib()
+    nodes = attr.ib()
+    elements = attr.ib()
+    symmetry = attr.ib(default=False)
+    _build = attr.ib(default={}, init=False, repr=False)
 
     def _create_build(self, load_cases=[]):
         """
@@ -125,7 +125,7 @@ class Structure(object):
         ndict = {n.name: 6*i for i, n in enumerate(nodes)}
         edict = {e.name: i for i, e in enumerate(elements)}
 
-        self.build = {
+        self._build = {
             'nodes': nodes,
             'elements': elements,
             'ndict': ndict,
@@ -150,7 +150,7 @@ class Structure(object):
                 * 'elements': The element lines, default is 'b--'.
         """
         # Build the structure
-        x = np.array(self.build['nodes'])
+        x = np.array(self._build['nodes'])
 
         # Create figure is one not provided
         if ax is None:
@@ -182,13 +182,13 @@ class Structure(object):
 
         # Plot elements
         if sym['elements'] is not None:
-            for e in self.build['elements']:
+            for e in self._build['elements']:
                 e = np.array(e.get_nodes())
                 ax.plot(e[:,0], e[:,1], e[:,2], sym['elements'])
 
         # Plot element text
         if sym['etext'] is not None:
-            for e in self.build['elements']:
+            for e in self._build['elements']:
                 p, q = e.get_nodes()
                 p = (q - p) / 3 + p
                 ax.text(p[0], p[1], p[2], e.name, ha='center',
@@ -200,7 +200,7 @@ class Structure(object):
 
         # Plot node text
         if sym['ntext'] is not None:
-            for n in self.build['nodes']:
+            for n in self._build['nodes']:
                 ax.text(n[0], n[1], n[2], n.name, color=sym['ntext'])
 
         return ax
@@ -226,7 +226,7 @@ class Structure(object):
         """
         # Build the structure
         r = rotation_matrix3(angle_x, angle_y, angle_z).T
-        x = np.array(self.build['nodes']).dot(r)
+        x = np.array(self._build['nodes']).dot(r)
 
         # Create figure is one not provided
         if ax is None:
@@ -255,13 +255,13 @@ class Structure(object):
 
         # Plot elements
         if sym['elements'] is not None:
-            for e in self.build['elements']:
+            for e in self._build['elements']:
                 e = np.array(e.get_nodes()).dot(r)
                 ax.plot(e[:,0], e[:,1], sym['elements'])
 
         # Plot element text
         if sym['etext'] is not None:
-            for e in self.build['elements']:
+            for e in self._build['elements']:
                 p = np.array(e.get_nodes()).dot(r)
                 p = (p[1] - p[0]) / 3 + p[0]
                 ax.text(p[0], p[1], e.name, ha='center',
@@ -273,7 +273,7 @@ class Structure(object):
 
         # Plot node text
         if sym['ntext'] is not None:
-            for n in self.build['nodes']:
+            for n in self._build['nodes']:
                 p = n.dot(r)
                 ax.text(p[0], p[1], n.name, color=sym['ntext'])
 
@@ -290,9 +290,9 @@ class Structure(object):
             The deflection matrix. If None, all deflections will be
             assumed to be zero.
         """
-        n = len(self.build['nodes'])
+        n = len(self._build['nodes'])
         k = np.zeros((6*n, 6*n), dtype='float')
-        ndict = self.build['ndict']
+        ndict = self._build['ndict']
 
         if defl is None:
             defl = np.zeros(6*n)
@@ -319,9 +319,9 @@ class Structure(object):
         lc : :class:`.LoadCase`
             The applied load case.
         """
-        n = len(self.build['nodes'])
+        n = len(self._build['nodes'])
         q = np.zeros(6*n, dtype='float')
-        ndict = self.build['ndict']
+        ndict = self._build['ndict']
 
         for n in lc.node_loads:
             i = ndict[n.node]
@@ -341,11 +341,11 @@ class Structure(object):
         defl : array
             The global node deflections.
         """
-        n = len(self.build['nodes'])
-        m = len(self.build['elements'])
+        n = len(self._build['nodes'])
+        m = len(self._build['elements'])
         q = np.zeros((m, 12), dtype='float')
-        ndict = self.build['ndict']
-        edict = self.build['edict']
+        ndict = self._build['ndict']
+        edict = self._build['edict']
 
         if defl is None:
             defl = np.zeros(6*n)
@@ -370,9 +370,9 @@ class Structure(object):
         defl : array
             The global node deflections.
         """
-        n = len(self.build['nodes'])
+        n = len(self._build['nodes'])
         q = np.zeros(6*n, dtype='float')
-        ndict = self.build['ndict']
+        ndict = self._build['ndict']
 
         if defl is None:
             defl = np.zeros(6*n)
@@ -398,9 +398,9 @@ class Structure(object):
         lc : :class:`.LoadCase`
             The applied load case.
         """
-        n = len(self.build['nodes'])
+        n = len(self._build['nodes'])
         d = np.zeros(6*n, dtype='float')
-        ndict = self.build['ndict']
+        ndict = self._build['ndict']
 
         for n in lc.node_loads:
             i = ndict[n.node]
@@ -417,16 +417,16 @@ class Structure(object):
         r : dict
             A dictionary of result arrays.
         """
-        n = len(self.build['nodes'])
-        m = len(self.build['elements'])
-        lc = self.build['load_cases']
+        n = len(self._build['nodes'])
+        m = len(self._build['elements'])
+        lc = self._build['load_cases']
         u = [x.fixities() for x in self.nodes] * len(lc)
         u = np.array(u, dtype='bool')
 
         # Global load data frame
         df1 = pd.DataFrame()
         df1['load_case'] = np.array([[l.name] * n for l in lc]).ravel()
-        df1['node'] = [x.name for x in self.build['nodes']] * len(lc)
+        df1['node'] = [x.name for x in self._build['nodes']] * len(lc)
 
         # Process global forces
         x = np.array(r.pop('glob_force')).reshape(-1, 6)
@@ -466,7 +466,7 @@ class Structure(object):
         # Local reaction data frame
         df3 = pd.DataFrame()
         df3['load_case'] = np.array([[l.name] * m for l in lc]).ravel()
-        df3['element'] = [x.name for x in self.build['elements']] * len(lc)
+        df3['element'] = [x.name for x in self._build['elements']] * len(lc)
 
         # Process local forces
         x = np.array(r.pop('loc_force')).reshape(-1, 12)
@@ -516,9 +516,9 @@ class Structure(object):
         lc : :class:`.LoadCase` or list
             A load case or list of load cases to perform analysis for.
         """
-        n = len(self.build['nodes'])
+        n = len(self._build['nodes'])
         k = self.global_stiffness()
-        ndict = self.build['ndict']
+        ndict = self._build['ndict']
 
         # Result dictionary
         r = dict(glob_force=[], glob_defl=[], loc_force=[], loc_defl=[])
@@ -536,7 +536,7 @@ class Structure(object):
         ki = np.linalg.inv(k[u][:,u])
         kuv = k[u][:,v]
 
-        for l in self.build['load_cases']:
+        for l in self._build['load_cases']:
             # Find unknown deflections and global forces
             d = self.global_defl(l)
             q = self.global_node_loads(l)
@@ -552,7 +552,7 @@ class Structure(object):
             # Find local forces
             q = self.local_elem_loads(l)
 
-            for m, e in enumerate(self.build['elements']):
+            for m, e in enumerate(self._build['elements']):
                 i, j = ndict[e.inode], ndict[e.jnode]
                 dl = np.array([d[i:i+6], d[j:j+6]]).ravel()
                 dl = e.transformation_matrix().dot(dl)

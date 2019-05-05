@@ -1,8 +1,13 @@
-import propy
+"""
+Copyright (c) 2019, Matt Pewsey
+"""
+
+import attr
 
 __all__ = ['Material']
 
 
+@attr.s(hash=False)
 class Material(object):
     """
     A class representing an engineered material.
@@ -16,12 +21,6 @@ class Material(object):
     rigidity : float
         The modulus of rigidity.
     """
-    # Custom properties
-    name = propy.str_property('name')
-
-    def __init__(self, name, elasticity, rigidity=0):
-        self.name = name
-        self.elasticity = elasticity
-        self.rigidity = rigidity
-
-    __repr__ = propy.repr_method('name', 'elasticity', 'rigidity')
+    name = attr.ib()
+    elasticity = attr.ib()
+    rigidity = attr.ib(default=0)

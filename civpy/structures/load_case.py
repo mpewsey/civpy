@@ -1,8 +1,13 @@
-import propy
+"""
+Copyright (c) 2019, Matt Pewsey
+"""
+
+import attr
 
 __all__ = ['LoadCase']
 
 
+@attr.s(hash=False)
 class LoadCase(object):
     """
     A class representing a structural load case.
@@ -17,14 +22,9 @@ class LoadCase(object):
         A list of :class:`.ElementLoad` to apply with the load case.
     """
     # Custom properties
-    name = propy.str_property('name')
-
-    def __init__(self, name, node_loads=[], elem_loads=[]):
-        self.name = name
-        self.node_loads = node_loads
-        self.elem_loads = elem_loads
-
-    __repr__ = propy.repr_method('name', 'node_loads', 'elem_loads')
+    name = attr.ib()
+    node_loads = attr.ib(default=[])
+    elem_loads = attr.ib(default=[])
 
     def set_nodes(self, ndict):
         """

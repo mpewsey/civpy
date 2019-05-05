@@ -1,5 +1,10 @@
+"""
+Copyright (c) 2019, Matt Pewsey
+"""
+
 import copy
-import propy
+import attr
+import weakref
 import numpy as np
 from math import cos, sin
 from functools import lru_cache
@@ -153,6 +158,7 @@ def clear_element_cache():
     transformation_matrix.cache_clear()
 
 
+@attr.s(hash=False)
 class Element(object):
     """
     A class representing a structural element.
@@ -174,57 +180,62 @@ class Element(object):
     jmx_free, jmy_free, jmz_free : bool
         The rotational fixities at the j-node about the local x, y, and z axes.
     """
-    SYMMETRIES = (None, 'x', 'y', 'xy')
+    P = 'p'
+    X = 'x'
+    Y = 'y'
+    XY = 'xy'
+    SYMMETRIES = (None, X, Y, XY)
 
     TRANSFORMS = {
-        'x': {'p': 'x', 'x': 'p', 'y': 'xy', 'xy': 'y'},
-        'y': {'p': 'y', 'x': 'xy', 'y': 'p', 'xy': 'x'},
+        X: {P: X, X: P, Y: XY, XY: Y},
+        Y: {P: Y, X: XY, Y: P, XY: X},
     }
 
-    # Custom properties
-    name = propy.str_property('name')
-    inode = propy.str_property('inode_name')
-    jnode = propy.str_property('jnode_name')
-    symmetry = propy.enum_property('symmetry', set(SYMMETRIES))
+    name = attr.ib(converter=str)
+    inode = attr.ib()
+    jnode = attr.ib()
+    group = attr.ib()
+    symmetry = attr.ib(default=None, validator=attr.validators.in_(SYMMETRIES))
+    roll = attr.ib(default=0)
+    unstr_length = attr.ib(default=None)
+    imx_free = attr.ib(default=False)
+    imy_free = attr.ib(default=False)
+    imz_free = attr.ib(default=False)
+    jmx_free = attr.ib(default=False)
+    jmy_free = attr.ib(default=False)
+    jmz_free = attr.ib(default=False)
+    _inode_ref = attr.ib(default=None, init=False, repr=False)
+    _jnode_ref = attr.ib(default=None, init=False, repr=False)
 
-    imx_free = propy.bool_property('imx_free')
-    imy_free = propy.bool_property('imy_free')
-    imz_free = propy.bool_property('imz_free')
+    def inode_ref():
+        def fget(self):
+            value = self._inode_ref
+            if value is None:
+                return value
+            return value()
+        def fset(self, value):
+            if value is not None:
+                value = weakref.ref(value)
+            self._inode_ref = value
+        def fdel(self):
+            del self._inode_ref
+        return locals()
+    inode_ref = property(**inode_ref())
 
-    jmx_free = propy.bool_property('jmx_free')
-    jmy_free = propy.bool_property('jmy_free')
-    jmz_free = propy.bool_property('jmz_free')
-
-    inode_ref = propy.weakref_property('inode_ref')
-    jnode_ref = propy.weakref_property('jnode_ref')
-
-    def __init__(self, name, inode, jnode, group,
-                 symmetry=None, roll=0, unstr_length=None,
-                 imx_free=False, imy_free=False, imz_free=False,
-                 jmx_free=False, jmy_free=False, jmz_free=False):
-        self.name = name
-        self.inode = inode
-        self.jnode = jnode
-        self.group = group
-        self.symmetry = symmetry
-        self.roll = roll
-        self.unstr_length = unstr_length
-
-        self.imx_free = imx_free
-        self.imy_free = imy_free
-        self.imz_free = imz_free
-
-        self.jmx_free = jmx_free
-        self.jmy_free = jmy_free
-        self.jmz_free = jmz_free
-
-        self.inode_ref = None
-        self.jnode_ref = None
-
-    __repr__ = propy.repr_method(
-        'name', 'inode', 'jnode', 'group', 'symmetry', 'roll',
-        'imx_free', 'imy_free', 'imz_free', 'jmx_free', 'jmy_free', 'jmz_free'
-    )
+    def jnode_ref():
+        def fget(self):
+            value = self._jnode_ref
+            if value is None:
+                return value
+            return value()
+        def fset(self, value):
+            if value is not None:
+                value = weakref.ref(value)
+            self._jnode_ref = value
+        def fdel(self):
+            del self._jnode_ref
+        return locals()
+    jnode_ref = property(**jnode_ref())
 
     def __str__(self):
         return self.name

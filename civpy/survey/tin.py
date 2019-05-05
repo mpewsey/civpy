@@ -1,6 +1,10 @@
-from __future__ import division
-import propy
+"""
+Copyright (c) 2019, Matt Pewsey
+"""
+
+import attr
 import numpy as np
+from math import ceil
 import matplotlib.pyplot as plt
 from scipy.spatial import Delaunay
 from .spatial_hash import SpatialHash
@@ -8,6 +12,7 @@ from .spatial_hash import SpatialHash
 __all__ = ['TIN']
 
 
+@attr.s(hash=False)
 class TIN(object):
     """
     A class for creating triangulated irregular networks (TIN) models for
@@ -37,17 +42,17 @@ class TIN(object):
     .. plot:: ../examples/survey/tin_ex1.py
         :include-source:
     """
-    def __init__(self, name, points=[], breaklines=[], max_edge=None,
-                 step=0.1, grid=10):
-        self.name = name
-        self.breaklines = breaklines
-        self.max_edge = max_edge
-        self.step = step
-        self._create_triangulation(points, grid)
+    name = attr.ib()
+    points = attr.ib(default=[], converter=np.asarray)
+    breaklines = attr.ib(default=[])
+    max_edge = attr.ib(default=None)
+    step = attr.ib(default=0.1)
+    grid = attr.ib(default=10)
 
-    __repr__ = propy.repr_method('name')
+    def __attrs_post_init__(self):
+        self._create_triangulation()
 
-    def _create_triangulation(self, points, grid):
+    def _create_triangulation(self):
         """
         Creates the Delaunay trianguation and spatial hash.
 
@@ -58,7 +63,7 @@ class TIN(object):
         grid : float
             The spatial hash grid spacing.
         """
-        points = np.asarray(points)
+        points = self.points
         b = self.breakpoints()
 
         if b.shape[0] > 0:
@@ -70,7 +75,7 @@ class TIN(object):
 
         self.points = points
         self.tri = Delaunay(points[:,:2])
-        self.hash = SpatialHash(points[:,:2], grid)
+        self.hash = SpatialHash(points[:,:2], self.grid)
         self._remove_simplices()
 
     def _remove_simplices(self):
@@ -101,7 +106,7 @@ class TIN(object):
 
             for i, (a, b) in enumerate(zip(line[:-1], line[1:])):
                 m = a - b
-                n = int(np.ceil(np.linalg.norm(m) / self.step))
+                n = int(ceil(np.linalg.norm(m) / self.step))
                 if n < 2: n = 2 if i == 0 else 1
                 x = np.expand_dims(np.linspace(0, 1, n), 1)
                 y = m * x + b

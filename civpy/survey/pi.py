@@ -1,4 +1,7 @@
-import propy
+"""
+Copyright (c) 2019, Matt Pewsey
+"""
+
 import numpy as np
 
 __all__ = ['PI']
@@ -16,11 +19,6 @@ class PI(np.ndarray):
         The radius of the horizontal curve. Use zero if a curve does not
         exist.
     """
-    # Custom properties
-    x = propy.index_property(0)
-    y = propy.index_property(1)
-    z = propy.index_property(2)
-
     def __new__(cls, x, y, z=0, radius=0):
         obj = np.array([x, y, z], dtype='float').view(cls)
         obj.radius = radius
@@ -30,4 +28,37 @@ class PI(np.ndarray):
         if obj is None: return
         self.radius = getattr(obj, 'radius', 0)
 
-    __repr__ = propy.repr_method('x', 'y', 'z', 'radius')
+    def x():
+        def fget(self):
+            return self[0]
+        def fset(self, value):
+            self[0] = value
+        return locals()
+    x = property(**x())
+
+    def y():
+        def fget(self):
+            return self[1]
+        def fset(self, value):
+            self[1] = value
+        return locals()
+    y = property(**y())
+
+    def z():
+        def fget(self):
+            return self[2]
+        def fset(self, value):
+            self[2] = value
+        return locals()
+    z = property(**z())
+
+    def __repr__(self):
+        s = [
+            ('x', self.x),
+            ('y', self.y),
+            ('z', self.z),
+            ('radius', self.radius),
+        ]
+
+        s = ', '.join('{}={!r}'.format(x, y) for x, y in s)
+        return '{}({})'.format(type(self).__name__, s)

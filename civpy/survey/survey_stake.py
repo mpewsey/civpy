@@ -1,4 +1,7 @@
-import propy
+"""
+Copyright (c) 2019, Matt Pewsey
+"""
+
 import numpy as np
 
 __all__ = ['SurveyStake']
@@ -10,20 +13,15 @@ class SurveyStake(np.ndarray):
     using the :meth:`SurveyStake.init_xy` or :meth:`SurveyStake.init_station`
     class methods.
     """
-    TYPES = ('xy', 'station')
-
-    # Custom properties
-    x = propy.index_property(0)
-    y = propy.index_property(1)
-    z = propy.index_property(2)
-    lock_z = propy.bool_property('lock_z')
-    _type = propy.enum_property('_type', TYPES)
+    XY = 'xy'
+    STATION = 'station'
+    TYPES = (XY, STATION)
 
     def __new__(cls, x, y, z, station, offset, height, rotation, lock_z, _type,
                 _init=False, **kwargs):
         if not _init:
             raise ValueError('SurveyStake should be initialized using the '
-                '`SurveyStake.init_xy` or `SurveyStake.init_station` methods '
+                'SurveyStake.init_xy or SurveyStake.init_station methods '
                 'in lieu of the standard initializer.')
 
         obj = np.array([x, y, z], dtype='float').view(cls)
@@ -46,8 +44,54 @@ class SurveyStake(np.ndarray):
         self._type = getattr(obj, '_type', 'xy')
         self.meta = getattr(obj, 'meta', {})
 
-    __repr__ = propy.repr_method('_type', 'x', 'y', 'z', 'station', 'offset',
-                                 'lock_z', 'meta')
+    def x():
+        def fget(self):
+            return self[0]
+        def fset(self, value):
+            self[0] = value
+        return locals()
+    x = property(**x())
+
+    def y():
+        def fget(self):
+            return self[1]
+        def fset(self, value):
+            self[1] = value
+        return locals()
+    y = property(**y())
+
+    def z():
+        def fget(self):
+            return self[2]
+        def fset(self, value):
+            self[2] = value
+        return locals()
+    z = property(**z())
+
+    def _type():
+        def fget(self):
+            return self.__type
+        def fset(self, value):
+            if value not in self.TYPES:
+                raise ValueError('Type {!r} must be in {!r}.'.format(value, self.TYPES))
+            self.__type = value
+        return locals()
+    _type = property(**_type())
+
+    def __repr__(self):
+        s = [
+            ('_type', self._type),
+            ('x', self.x),
+            ('y', self.y),
+            ('z', self.z),
+            ('station', self.station),
+            ('offset', self.offset),
+            ('lock_z', self.lock_z),
+            ('meta', self.meta),
+        ]
+
+        s = ', '.join('{}={!r}'.format(x, y) for x, y in s)
+        return '{}({})'.format(type(self).__name__, s)
 
     @classmethod
     def init_xy(cls, x, y, z=0, height=0, rotation=0, lock_z=False, **kwargs):

@@ -1,5 +1,8 @@
+"""
+Copyright (c) 2019, Matt Pewsey
+"""
+
 import copy
-import propy
 import numpy as np
 
 __all__ = ['Node']
@@ -22,22 +25,10 @@ class Node(np.ndarray):
     mx_free, my_free, mz_free : bool
         The moment fixities of the node about the x, y, and z axes.
     """
-    SYMMETRIES = (None, 'x', 'y', 'xy')
-
-    # Custom properties
-    name = propy.str_property('name')
-    x = propy.index_property(0)
-    y = propy.index_property(1)
-    z = propy.index_property(2)
-    symmetry = propy.enum_property('symmetry', set(SYMMETRIES))
-
-    fx_free = propy.bool_property('fx_free')
-    fy_free = propy.bool_property('fy_free')
-    fz_free = propy.bool_property('fz_free')
-
-    mx_free = propy.bool_property('mx_free')
-    my_free = propy.bool_property('my_free')
-    mz_free = propy.bool_property('mz_free')
+    X = 'x'
+    Y = 'y'
+    XY = 'xy'
+    SYMMETRIES = (None, X, Y, XY)
 
     def __new__(cls, name, x=0, y=0, z=0, symmetry=None,
                 fx_free=True, fy_free=True, fz_free=True,
@@ -71,8 +62,59 @@ class Node(np.ndarray):
         self.my_free = getattr(obj, 'my_free', True)
         self.mz_free = getattr(obj, 'mz_free', True)
 
-    __repr__ = propy.repr_method('name', 'x', 'y', 'z', 'symmetry',
-        'fx_free', 'fy_free', 'fz_free', 'mx_free', 'my_free', 'mz_free')
+    def x():
+        def fget(self):
+            return self[0]
+        def fset(self, value):
+            self[0] = value
+        return locals()
+    x = property(**x())
+
+    def y():
+        def fget(self):
+            return self[1]
+        def fset(self, value):
+            self[1] = value
+        return locals()
+    y = property(**y())
+
+    def z():
+        def fget(self):
+            return self[2]
+        def fset(self, value):
+            self[2] = value
+        return locals()
+    z = property(**z())
+
+    def symmetry():
+        def fget(self):
+            return self._symmetry
+        def fset(self, value):
+            if value not in self.SYMMETRIES:
+                raise ValueError('Type {!r} must be in {!r}.'.format(value, self.SYMMETRIES))
+            self._symmetry = value
+        def fdel(self):
+            del self._symmetry
+        return locals()
+    symmetry = property(**symmetry())
+
+    def __repr__(self):
+        s = [
+            ('name', self.name),
+            ('x', self.x),
+            ('y', self.y),
+            ('z', self.z),
+            ('symmetry', self.symmetry),
+            ('fx_free', self.fx_free),
+            ('fy_free', self.fy_free),
+            ('fz_free', self.fz_free),
+            ('mx_free', self.mx_free),
+            ('my_free', self.my_free),
+            ('mz_free', self.mz_free),
+        ]
+
+        s = ', '.join('{}={!r}'.format(x, y) for x, y in s)
+        return '{}({})'.format(type(self).__name__, s)
 
     def __str__(self):
         return self.name

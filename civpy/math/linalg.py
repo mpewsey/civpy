@@ -1,3 +1,7 @@
+"""
+Copyright (c) 2019, Matt Pewsey
+"""
+
 import numpy as np
 from math import cos, sin
 

@@ -1,4 +1,8 @@
-import propy
+"""
+Copyright (c) 2019, Matt Pewsey
+"""
+
+import weakref
 import numpy as np
 from functools import lru_cache
 from .element import transformation_matrix
@@ -248,16 +252,6 @@ class ElementLoad(np.ndarray):
         The distance from the ix position toward the j node over which
         the loads are applied.
     """
-    # Custom properties
-    element = propy.str_property('element')
-    fx = propy.index_property(0)
-    fy = propy.index_property(1)
-    fz = propy.index_property(2)
-    mx = propy.index_property(3)
-    my = propy.index_property(4)
-    mz = propy.index_property(5)
-    _element_ref = propy.weakref_property('_element_ref')
-
     def __new__(cls, element, fx=0, fy=0, fz=0, mx=0, my=0, mz=0, ix=0, dx=-1):
         obj = np.array([fx, fy, fz, mx, my, mz], dtype='float').view(cls)
         obj.element = element
@@ -270,7 +264,82 @@ class ElementLoad(np.ndarray):
         self.element = getattr(obj, 'element', '')
         self.ix = getattr(obj, 'ix', 0)
         self.dx = getattr(obj, 'dx', 0)
-        self._element_ref = None
+        self.element_ref = None
+
+    def element():
+        def fget(self):
+            return self._element
+        def fset(self, value):
+            if not isinstance(value, str):
+                value = str(value)
+            self._element = value
+        def fdel(self):
+            del self._element
+        return locals()
+    element = property(**element())
+
+    def element_ref():
+        def fget(self):
+            value = self._element_ref
+            if value is None:
+                return value
+            return value()
+        def fset(self, value):
+            if value is not None:
+                value = weakref.ref(value)
+            self._element_ref = value
+        def fdel(self):
+            del self._element_ref
+        return locals()
+    element_ref = property(**element_ref())
+
+    def fx():
+        def fget(self):
+            return self[0]
+        def fset(self, value):
+            self[0] = value
+        return locals()
+    fx = property(**fx())
+
+    def fy():
+        def fget(self):
+            return self[1]
+        def fset(self, value):
+            self[1] = value
+        return locals()
+    fy = property(**fy())
+
+    def fz():
+        def fget(self):
+            return self[2]
+        def fset(self, value):
+            self[2] = value
+        return locals()
+    fz = property(**fz())
+
+    def mx():
+        def fget(self):
+            return self[3]
+        def fset(self, value):
+            self[3] = value
+        return locals()
+    mx = property(**mx())
+
+    def my():
+        def fget(self):
+            return self[4]
+        def fset(self, value):
+            self[4] = value
+        return locals()
+    my = property(**my())
+
+    def mz():
+        def fget(self):
+            return self[5]
+        def fset(self, value):
+            self[5] = value
+        return locals()
+    mz = property(**mz())
 
     def __repr__(self):
         s = [
@@ -278,7 +347,7 @@ class ElementLoad(np.ndarray):
             'forces={!r}'.format((self.fx, self.fy, self.fz)),
             'moments={!r}'.format((self.mx, self.my, self.mz)),
             'ix={!r}'.format(self.ix),
-            'dx={!r}'.format(self.dx)
+            'dx={!r}'.format(self.dx),
         ]
 
         return '{}({})'.format(type(self).__name__, ', '.join(s))

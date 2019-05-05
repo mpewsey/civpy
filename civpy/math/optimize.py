@@ -1,3 +1,7 @@
+"""
+Copyright (c) 2019, Matt Pewsey
+"""
+
 import scipy.optimize
 
 __all__ = ['fsolve']
