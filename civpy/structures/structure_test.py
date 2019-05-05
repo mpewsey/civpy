@@ -37,7 +37,7 @@ def Structure1():
 def test_rotation_matrix():
     struct = Structure1()
     struct._create_build()
-    e1, e2, e3 = struct.build['elements']
+    e1, e2, e3 = struct._build['elements']
 
     a = e1.rotation_matrix().ravel()
     b = np.identity(3).ravel()
@@ -58,7 +58,7 @@ def test_rotation_matrix():
 def test_transformation_matrix():
     struct = Structure1()
     struct._create_build()
-    e1, e2, e3 = struct.build['elements']
+    e1, e2, e3 = struct._build['elements']
 
     a = e1.transformation_matrix().ravel()
     b = np.identity(12).ravel()
@@ -85,7 +85,7 @@ def test_transformation_matrix():
 def test_length():
     struct = Structure1()
     struct._create_build()
-    e1, e2, e3 = struct.build['elements']
+    e1, e2, e3 = struct._build['elements']
 
     a = e1.length()
     assert pytest.approx(a) == 240
@@ -100,7 +100,7 @@ def test_length():
 def test_local_stiffness():
     struct = Structure1()
     struct._create_build()
-    e1, _, _ = struct.build['elements']
+    e1, _, _ = struct._build['elements']
 
     a = e1.local_stiffness().ravel()
     b = np.array([
@@ -124,7 +124,7 @@ def test_local_stiffness():
 def test_global_stiffness():
     struct = Structure1()
     struct._create_build()
-    e1, e2, e3 = struct.build['elements']
+    e1, e2, e3 = struct._build['elements']
 
     a = e1.global_stiffness().ravel()
     b = np.array([

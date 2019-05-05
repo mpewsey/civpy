@@ -1,8 +1,13 @@
-import propy
+"""
+Copyright (c) 2019, Matt Pewsey
+"""
+
+import attr
 
 __all__ = ['ElementGroup']
 
 
+@attr.s(hash=False)
 class ElementGroup(object):
     """
     A class representing a group of element properties.
@@ -16,12 +21,6 @@ class ElementGroup(object):
     material : :class:`.Material`
         The group material.
     """
-    # Custom properties
-    name = propy.str_property('name')
-
-    def __init__(self, name, section, material):
-        self.name = name
-        self.section = section
-        self.material = material
-
-    __repr__ = propy.repr_method('name', 'section', 'material')
+    name = attr.ib()
+    section = attr.ib()
+    material = attr.ib()

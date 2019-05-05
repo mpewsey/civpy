@@ -1,4 +1,7 @@
-from __future__ import division
+"""
+Copyright (c) 2019, Matt Pewsey
+"""
+
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
@@ -109,6 +112,8 @@ class SpatialHash(object):
 
     def multi_get(self, points, norm=True):
         """
+        Returns the point indices corresponding to the input array of points.
+
         Parameters
         ----------
         points : list

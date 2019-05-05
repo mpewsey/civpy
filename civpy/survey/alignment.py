@@ -1,5 +1,8 @@
-from __future__ import division
-import propy
+"""
+Copyright (c) 2019, Matt Pewsey
+"""
+
+import attr
 import numpy as np
 import matplotlib.pyplot as plt
 from .spatial_hash import SpatialHash
@@ -7,6 +10,7 @@ from .spatial_hash import SpatialHash
 __all__ = ['Alignment']
 
 
+@attr.s(hash=False)
 class Alignment(object):
     """
     A class representing a survey alignment.
@@ -34,22 +38,16 @@ class Alignment(object):
     .. plot:: ../examples/survey/alignment_ex1.py
         :include-source:
     """
+    # Global class variables
     BISC_TOL = 1e-4 # Bisector station tolerance
 
-    # Custom properties
-    name = propy.str_property('name')
-
-    def __init__(self, name, pis=[], stakes=[], grid=10, view_offset=15,
-                 view_margin=15):
-        self.name = name
-        self.pis = pis
-        self.stakes = stakes
-        self.grid = grid
-        self.view_offset = view_offset
-        self.view_margin = view_margin
-
-    __repr__ = propy.repr_method('name', 'grid', 'view_offset', 'view_margin',
-                                 'pis', 'stakes')
+    # Properties
+    name = attr.ib()
+    pis = attr.ib(default=[])
+    stakes = attr.ib(default=[])
+    grid = attr.ib(default=10)
+    view_offset = attr.ib(default=15)
+    view_margin = attr.ib(default=15)
 
     def set_stake_xy(self):
         """
